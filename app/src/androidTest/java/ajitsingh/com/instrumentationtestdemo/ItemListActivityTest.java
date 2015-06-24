@@ -1,17 +1,15 @@
 package ajitsingh.com.instrumentationtestdemo;
 
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -50,6 +48,10 @@ public class ItemListActivityTest {
       }
     });
 
-    onView(withId(R.id.item_detail)).check(matches(withText("Item 1")));
+    Instrumentation.ActivityMonitor monitor = instrumentation.addMonitor(ItemDetailActivity.class.getName(), null, false);
+    Activity itemDetailActivity = instrumentation.waitForMonitorWithTimeout(monitor, 5000);
+
+    TextView detailView = (TextView) itemDetailActivity.findViewById(R.id.item_detail);
+    assertThat(detailView.getText().toString(), is("Item 1"));
   }
 }
